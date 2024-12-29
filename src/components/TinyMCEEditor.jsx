@@ -33,6 +33,7 @@ import 'tinymce/plugins/emoticons';
 import 'tinymce/plugins/emoticons/js/emojis';
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/paste';
+import 'tinymce/plugins/media';
 /* eslint import/no-webpack-loader-syntax: off */
 // eslint-disable-next-line import/no-unresolved
 import edxBrandCss from '!!raw-loader!sass-loader!../index.scss';
@@ -142,7 +143,6 @@ const TinyMCEEditor = (props) => {
                       + ' | link blockquote openedx_code image'
                       + ' | bullist numlist outdent indent'
                       + ' | removeformat'
-                      + ' | openedx_html'
                       + ' | emoticons'
                       + ' | charmap',
           content_css: false,
@@ -152,6 +152,7 @@ const TinyMCEEditor = (props) => {
           relative_urls: false,
           default_link_target: '_blank',
           target_list: false,
+          file_picker_types: 'file image media',
           images_upload_handler: uploadHandler,
           setup,
         }}
