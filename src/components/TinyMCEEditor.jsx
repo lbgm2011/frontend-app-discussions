@@ -31,6 +31,7 @@ import 'tinymce/plugins/link';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/emoticons';
 import 'tinymce/plugins/emoticons/js/emojis';
+
 import 'tinymce/plugins/charmap';
 import 'tinymce/plugins/paste';
 import 'tinymce/plugins/media';
@@ -53,20 +54,7 @@ const TinyMCEEditor = (props) => {
   const enableInContextSidebar = Boolean(new URLSearchParams(locationObj.search).get('inContextSidebar') !== null);
 
   /* istanbul ignore next */
-  const setup = useCallback((editor) => {
-    editor.ui.registry.addButton('openedx_code', {
-      icon: 'sourcecode',
-      onAction: () => {
-        editor.execCommand('CodeSample');
-      },
-    });
-    editor.ui.registry.addButton('openedx_html', {
-      text: 'HTML',
-      onAction: () => {
-        editor.execCommand('mceCodeEditor');
-      },
-    });
-  }, []);
+  const setup = useCallback((editor) => {}, []);
 
   const uploadHandler = useCallback(async (blobInfo, success, failure) => {
     try {
@@ -154,7 +142,7 @@ const TinyMCEEditor = (props) => {
           plugins: 'autoresize autosave codesample link lists image media imagetools code emoticons charmap paste',
           toolbar: 'undo redo'
                       + ' | formatselect | bold italic underline'
-                      + ' | link blockquote openedx_code image'
+                      + ' | link blockquote image'
                       + ' | bullist numlist outdent indent'
                       + ' | removeformat'
                       + ' | emoticons'
