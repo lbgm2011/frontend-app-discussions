@@ -71,23 +71,37 @@ const TinyMCEEditor = (props) => {
   const uploadHandler = useCallback(async (blobInfo, success, failure) => {
     try {
       const blob = blobInfo.blob();
-      const imageSize = blobInfo.blob().size / 1024;
-      if (imageSize > MAX_UPLOAD_FILE_SIZE) {
-        failure(`Images size should not exceed ${MAX_UPLOAD_FILE_SIZE} KB`);
+      const fileSize = blob.size / 1024; // File size in KB
+      const fileType = blob.type;
+  
+      if (fileSize > MAX_UPLOAD_FILE_SIZE) {
+        failure(`File size should not exceed ${MAX_UPLOAD_FILE_SIZE} KB`);
         return;
       }
+  
       const filename = blobInfo.filename();
       const { location } = await uploadFile(blob, filename, courseId, postId || 'root');
-      const img = new Image();
-      img.onload = () => {
-        if (img.height > 999 || img.width > 999) { setShowImageWarning(true); }
-      };
-      img.src = location;
-      success(location);
+  
+      if (fileType.startsWith('image/')) {
+        // Handle image files and use the callback to insert as an image
+        const img = new Image();
+        img.onload = () => {
+          if (img.height > 999 || img.width > 999) {
+            setShowImageWarning(true);
+          }
+        };
+        img.src = location;
+        success(location);
+      } else {
+        // Handle non-image files and directly insert content as a link
+        const linkHTML = `<a href="${location}" target="_blank">${filename}</a>`;
+        tinymce.activeEditor.insertContent(linkHTML); // Insert link instead of calling success()
+      }
     } catch (e) {
       failure(e.toString(), { remove: true });
     }
   }, [courseId, postId]);
+  
 
   const handleClose = useCallback(() => {
     setShowImageWarning(false);
@@ -137,7 +151,7 @@ const TinyMCEEditor = (props) => {
           a11y_advanced_options: true,
           autosave_interval: '1s',
           autosave_restore_when_empty: false,
-          plugins: 'autoresize autosave codesample link lists image imagetools code emoticons charmap paste',
+          plugins: 'autoresize autosave codesample link lists image media imagetools code emoticons charmap paste',
           toolbar: 'undo redo'
                       + ' | formatselect | bold italic underline'
                       + ' | link blockquote openedx_code image'
